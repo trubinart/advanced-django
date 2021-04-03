@@ -1,13 +1,13 @@
 from django.urls import path
-from authapp.views import  logout, profile
-from authapp.views import UserLoginView, UserRegisterView
+from authapp.views import  logout, profile, login, register, verify
 
 app_name = 'auth'
 
 urlpatterns = [
-   path('login/', UserLoginView.as_view(), name='login'),
-   path('register/', UserRegisterView.as_view() , name='register'),
+   path('login/', login, name='login'),
+   path('register/', register , name='register'),
    path('profile/', profile, name='profile'),
    path('logout/', logout, name='logout'),
+   path('verify/<str:email>/<str:activation_key>', verify, name='verify'),
 
 ]
