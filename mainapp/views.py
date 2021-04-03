@@ -44,6 +44,5 @@ def products(request, category_id=None, page=1):
         'title': 'GeekShop - Каталог',
         'h1': 'GeekShop',
         'products': products_paginator,
-        'categories': Category.objects.all(),
     }
     return render(request, 'mainapp/products.html', content)
