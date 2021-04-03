@@ -1,1 +1,3 @@
-# advanced-django
+# My backend for shop
+
+
