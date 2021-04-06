@@ -1,12 +1,14 @@
 from django.shortcuts import render, HttpResponseRedirect
-from authapp.forms import UsersLoginForm, UsersRegistration, UsersProfileForm
+from authapp.forms import UsersLoginForm, UsersRegistration, UsersProfileForm, UsersAdvancedProfileForm
 from django.contrib import auth
 from django.urls import reverse
 from basketapp.models import Basket
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
 from django.conf import settings
-from authapp.models import Users
+from authapp.models import Users, UsersProfile
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 
 def login(request):
@@ -59,14 +61,18 @@ def register(request):
 def profile(request):
     if request.method == 'POST':
         form = UsersProfileForm(data=request.POST, files=request.FILES, instance=request.user)
-        if form.is_valid():
+        form_profile = UsersAdvancedProfileForm(data=request.POST, instance=request.user.usersprofile)
+        if form.is_valid() and form_profile.is_valid():
             form.save()
+            form_profile.save()
             return HttpResponseRedirect(reverse('auth:profile'))
     else:
         form = UsersProfileForm(instance=request.user)
+        form_profile = UsersAdvancedProfileForm(instance=request.user.usersprofile)
 
     content = {
         'form': form,
+        'form_profile': form_profile,
         'baskets': Basket.objects.filter(user=request.user),
     }
     return render(request, 'authapp/profile.html', content)
@@ -94,7 +100,7 @@ def verify(request, email, activation_key):
         if user.activation_key == activation_key and user.is_activation_key_expired:
             user.is_active = True
             user.save()
-            auth.login(request, user)
+            auth.login(request, user, backend='django.contrib.auth.backends.ModelBackend')
             return render(request, 'authapp/verification.html')
         else:
             print(f'Ошибка активации юзера: {user}')
@@ -103,3 +109,14 @@ def verify(request, email, activation_key):
     except Exception as error:
         print(f'error activation user : {error.args}')
         return HttpResponseRedirect(reverse('main'))
+
+
+@receiver(post_save, sender=Users)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        UsersProfile.objects.create(user=instance)
+
+
+@receiver(post_save, sender=Users)
+def save_user_profile(sender, instance, **kwargs):
+    instance.usersprofile.save()

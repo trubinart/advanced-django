@@ -1,5 +1,5 @@
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm, UserChangeForm
-from authapp.models import Users
+from authapp.models import Users, UsersProfile
 from django import forms
 import random, hashlib
 
@@ -58,3 +58,14 @@ class UsersProfileForm(UserChangeForm):
         self.fields['email'].widget.attrs['readonly'] = True
         self.fields['username'].widget.attrs['readonly'] = True
         self.fields['avatar'].widget.attrs['class'] = 'custom-file-label'
+
+
+class UsersAdvancedProfileForm(UserChangeForm):
+    class Meta:
+        model = UsersProfile
+        fields = ('about_me', 'gender')
+
+    def __init__(self, *args, **kwargs):
+        super(UsersAdvancedProfileForm, self).__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            field.widget.attrs['class'] = 'form-control py-4'

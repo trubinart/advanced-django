@@ -17,3 +17,9 @@ class Users(AbstractUser):
     @property
     def is_activation_key_expired(self):
         return now() - self.activation_key_registered - timedelta(hours=ACTIVATION_KEY_TTL)
+
+
+class UsersProfile(models.Model):
+    user = models.OneToOneField(Users, primary_key=True, on_delete=models.CASCADE)
+    about_me = models.TextField(verbose_name='о себе', blank=True)
+    gender = models.CharField(verbose_name='пол', max_length=1, blank=True)
