@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.template.loader import render_to_string
 from django.http import JsonResponse
 
+
 @login_required
 def basket_add(request, product_id):
     product = get_object_or_404(Products, id=product_id)
@@ -27,6 +28,7 @@ def basket_remove(request, id):
     basket = Basket.objects.get(id=id)
     basket.delete()
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
 
 def basket_edit(request, name, quantity):
     if request.is_ajax():

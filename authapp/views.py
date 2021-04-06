@@ -8,6 +8,7 @@ from django.core.mail import send_mail
 from django.conf import settings
 from authapp.models import Users
 
+
 def login(request):
     if request.method == 'POST':
         form = UsersLoginForm(data=request.POST)
@@ -53,6 +54,7 @@ def register(request):
     }
     return render(request, 'authapp/register.html', content)
 
+
 @login_required
 def profile(request):
     if request.method == 'POST':
@@ -85,6 +87,7 @@ def send_verify_mail(user):
 
     return send_mail(title, message, settings.EMAIL_HOST_USER, [user.email], fail_silently=False)
 
+
 def verify(request, email, activation_key):
     try:
         user = Users.objects.get(email=email)
@@ -100,6 +103,3 @@ def verify(request, email, activation_key):
     except Exception as error:
         print(f'error activation user : {error.args}')
         return HttpResponseRedirect(reverse('main'))
-
-    except:
-        pass

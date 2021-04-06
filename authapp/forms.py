@@ -3,6 +3,7 @@ from authapp.models import Users
 from django import forms
 import random, hashlib
 
+
 class UsersLoginForm(AuthenticationForm):
     class Meta:
         model = Users
@@ -41,6 +42,7 @@ class UsersRegistration(UserCreationForm):
         user.activation_key = hashlib.sha1((user.email + salt).encode('utf8')).hexdigest()
         user.save()
         return user
+
 
 class UsersProfileForm(UserChangeForm):
     avatar = forms.ImageField(widget=forms.FileInput())

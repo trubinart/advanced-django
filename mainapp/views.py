@@ -4,6 +4,7 @@ import datetime
 from mainapp.models import Category, Products
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
+
 # Create your views here.
 def index(request):
     dateTime = datetime.datetime.now()
@@ -12,10 +13,11 @@ def index(request):
         'h1': 'GeekShop Store',
         'date': dateTime
     }
-    return render(request,'mainapp/index.html', content)
+    return render(request, 'mainapp/index.html', content)
+
 
 # def products(request, category_id=None):
-#     content = {
+#     content = {a
 #         'title': 'GeekShop - Каталог',
 #         'h1': 'GeekShop',
 #         'products': Products.objects.filter(category_id=category_id) if category_id else Products.objects.all(),
