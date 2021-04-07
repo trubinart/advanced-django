@@ -64,7 +64,6 @@ def profile(request):
         form_profile = UsersAdvancedProfileForm(data=request.POST, instance=request.user.usersprofile)
         if form.is_valid() and form_profile.is_valid():
             form.save()
-            form_profile.save()
             return HttpResponseRedirect(reverse('auth:profile'))
     else:
         form = UsersProfileForm(instance=request.user)

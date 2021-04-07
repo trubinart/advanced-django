@@ -63,7 +63,7 @@ class UsersProfileForm(UserChangeForm):
 class UsersAdvancedProfileForm(UserChangeForm):
     class Meta:
         model = UsersProfile
-        fields = ('about_me', 'gender')
+        fields = ('about_me', 'gender', 'locate')
 
     def __init__(self, *args, **kwargs):
         super(UsersAdvancedProfileForm, self).__init__(*args, **kwargs)

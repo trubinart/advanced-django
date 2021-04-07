@@ -62,17 +62,27 @@
                         </div>
                     </div>
 
-                    <div class="col-lg-6">
-                        <div class="form-group">
-                            <label class="small mb-1" for="{{ form_profile.about_me.id_for_lable }}">Обо мне</label>
-                            {{ form_profile.about_me }}
+                    <div class="form-row">
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label class="small mb-1" for="{{ form_profile.locate.id_for_label }}">Страна</label>
+                                {{ form_profile.locate }}
+                            </div>
                         </div>
+
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label class="small mb-1" for="{{ form_profile.about_me.id_for_label }}">Обо мне</label>
+                                {{ form_profile.about_me }}
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label class="small mb-1" for="{{ form_profile.gender.id_for_label }}">Пол</label>
+                                {{ form_profile.gender }}
+                            </div>
                     </div>
-                    <div class="col-lg-6">
-                        <div class="form-group">
-                            <label class="small mb-1" for="{{ form_profile.gender.id_for_lable }}">Пол</label>
-                            {{ form_profile.gender }}
-                        </div>
+
                     </div>
 
                     <div class="form-row">
