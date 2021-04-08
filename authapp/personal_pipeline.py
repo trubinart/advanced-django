@@ -1,5 +1,6 @@
 from social_core.exceptions import AuthForbidden
 
+
 def save_user_profile(backend, user, response, *args, **kwargs):
     print(response)
     print(response['locale'])
@@ -11,7 +12,6 @@ def save_user_profile(backend, user, response, *args, **kwargs):
             if locale != 'ru':
                 user.delete()
                 raise AuthForbidden('social_core.backends.google.GoogleOAuth2')
-            else:
-                user.usersprofile.locate = response['locale']
 
+        user.usersprofile.locate = response['locale']
         user.usersprofile.save()

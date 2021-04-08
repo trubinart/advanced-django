@@ -20,7 +20,16 @@ class Users(AbstractUser):
 
 
 class UsersProfile(models.Model):
+    MALE = 'M'
+    FEMALE = 'W'
+
+    GENDER_CHOICES = (
+        (MALE, 'мужской'),
+        (FEMALE, 'женский'),
+    )
+
     user = models.OneToOneField(Users, primary_key=True, on_delete=models.CASCADE)
     about_me = models.TextField(verbose_name='о себе', blank=True)
-    gender = models.CharField(verbose_name='пол', max_length=1, blank=True)
-    locate = models.TextField(verbose_name='страна', blank=True)
+    gender = models.CharField(verbose_name='пол', max_length=1,
+                              choices=GENDER_CHOICES, blank=True)
+    locate = models.CharField(verbose_name='страна', blank=True, max_length=3)
