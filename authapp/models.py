@@ -4,7 +4,6 @@ from django.utils.timezone import now
 from datetime import timedelta
 from geekshop.settings import ACTIVATION_KEY_TTL
 
-
 class Users(AbstractUser):
     avatar = models.ImageField(upload_to='users_avatars', blank=True)
     age = models.PositiveIntegerField(verbose_name='возраст', blank=True, null=True)
@@ -13,6 +12,15 @@ class Users(AbstractUser):
 
     def __str__(self):
         return f"{self.username}"
+
+    @property
+    def basket_quantity(self):
+        return sum(basket.quantity for basket in self.basket.all())
+
+    @property
+    def basket_sum(self):
+        return sum(basket.sum() for basket in self.basket.all())
+
 
     @property
     def is_activation_key_expired(self):
