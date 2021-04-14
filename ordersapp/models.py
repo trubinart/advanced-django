@@ -77,12 +77,13 @@ class OrderItem(models.Model):
     def get_item(cls, pk):
         return cls.objects.filter(pk=pk).first()
 
+
 @receiver(pre_save, sender=OrderItem)
 def product_quantity_update_save(sender, update_fields, instance, **kwargs):
     print('orderitem save2')
     if instance.pk:
         instance.product.quantity += sender.get_item(instance.pk).quantity - \
-                                instance.quantity
+                                     instance.quantity
 
     else:
         instance.product.quantity -= instance.quantity
