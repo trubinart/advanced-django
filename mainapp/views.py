@@ -1,5 +1,6 @@
 from django.shortcuts import render
 import json
+from django.http import JsonResponse
 import datetime
 from mainapp.models import Category, Products
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -48,3 +49,11 @@ def products(request, category_id=None, page=1):
         'products': products_paginator,
     }
     return render(request, 'mainapp/products.html', content)
+
+def price(request, pk):
+    if request.is_ajax():
+        product = Products.objects.filter(pk=pk).first()
+        print(product)
+        return JsonResponse(
+            {'price': product and product.price or 0}
+        )
