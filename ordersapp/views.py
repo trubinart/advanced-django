@@ -85,7 +85,8 @@ class OrderUpdate(UpdateView):
                 instance=self.object
             )
         else:
-            formset = OrderFormSet(instance=self.object)
+            queryset = self.object.items.select_related()
+            formset = OrderFormSet(instance=self.object, queryset=queryset)
             for form in formset.forms:
                 instance = form.instance
                 if instance.pk:
@@ -102,7 +103,7 @@ class OrderUpdate(UpdateView):
             if orderitems.is_valid():
                 orderitems.save()
 
-        if self.object.total_cost == 0:
+        if self.object.get_summary['total_cost'] == 0:
             self.object.delete()
 
         return order

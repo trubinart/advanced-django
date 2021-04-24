@@ -5,7 +5,7 @@ from django.shortcuts import render, HttpResponseRedirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.template.loader import render_to_string
 from django.http import JsonResponse
-
+from collections import ChainMap
 
 @login_required
 def basket_add(request, product_id):
@@ -41,7 +41,7 @@ def basket_edit(request, name, quantity):
         else:
             new_basket.delete()
 
-    basket_final = Basket.objects.filter(user=request.user)
+    basket_final = Basket.objects.filter(user=request.user).select_related()
 
     content = {
         'baskets': basket_final

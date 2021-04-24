@@ -23,7 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'v-v$$)5&xp%*!kv%_2vfqhrwi&8jy%&6kj!8zwg+=hk8deje=n'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', '[::1]']
 
@@ -44,16 +44,52 @@ INSTALLED_APPS = [
     'ordersapp',
 ]
 
+if DEBUG:
+    INSTALLED_APPS.extend([
+        'debug_toolbar',
+        'template_profiler_panel',
+        'django_extensions'
+    ])
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'social_django.middleware.SocialAuthExceptionMiddleware',
 ]
+
+if DEBUG:
+    MIDDLEWARE.append(
+        'debug_toolbar.middleware.DebugToolbarMiddleware'
+    )
+
+if DEBUG:
+
+   DEBUG_TOOLBAR_CONFIG = {
+       'SHOW_TOOLBAR_CALLBACK': lambda x: True,
+   }
+
+DEBUG_TOOLBAR_PANELS = [
+   'debug_toolbar.panels.versions.VersionsPanel',
+   'debug_toolbar.panels.timer.TimerPanel',
+   'debug_toolbar.panels.settings.SettingsPanel',
+   'debug_toolbar.panels.headers.HeadersPanel',
+   'debug_toolbar.panels.request.RequestPanel',
+   'debug_toolbar.panels.sql.SQLPanel',
+   'debug_toolbar.panels.templates.TemplatesPanel',
+   'debug_toolbar.panels.staticfiles.StaticFilesPanel',
+   'debug_toolbar.panels.cache.CachePanel',
+   'debug_toolbar.panels.signals.SignalsPanel',
+   'debug_toolbar.panels.logging.LoggingPanel',
+   'debug_toolbar.panels.redirects.RedirectsPanel',
+   'debug_toolbar.panels.profiling.ProfilingPanel',
+   'template_profiler_panel.panels.template.TemplateProfilerPanel',
+]
+
 
 ROOT_URLCONF = 'geekshop.urls'
 
@@ -193,3 +229,18 @@ SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.user.user_details',
     'authapp.personal_pipeline.save_user_profile',
 )
+
+
+if os.name == 'posix':
+   CACHE_MIDDLEWARE_ALIAS = 'default'
+   CACHE_MIDDLEWARE_SECONDS = 120
+   CACHE_MIDDLEWARE_KEY_PREFIX = 'geekshop'
+
+   CACHES = {
+       'default': {
+           'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+           'LOCATION': '127.0.0.1:11211',
+       }
+   }
+
+LOW_CACHE = True

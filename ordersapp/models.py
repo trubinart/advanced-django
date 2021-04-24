@@ -27,9 +27,9 @@ class Order(models.Model):
     update_dt = models.DateTimeField('время', auto_now=True)
     status = models.CharField('статус', max_length=1,
                               choices=STATUS_CHOICES,
-                              default=STATUS_FORMING)
+                              default=STATUS_FORMING, db_index=True)
     is_active = models.BooleanField(verbose_name='активен',
-                                    default=True)
+                                    default=True, db_index=True)
 
     class Meta:
         ordering = ('-add_dt',)
@@ -40,23 +40,30 @@ class Order(models.Model):
     def is_forming(self):
         return self.status == self.STATUS_FORMING
 
-    @property
-    def total_quantity(self):
-        return sum(map(lambda x: x.quantity, self.items.all()))
-
-    @property
-    def total_cost(self):
-        return sum(map(lambda x: x.product_cost, self.items.all()))
+    # @property
+    # def total_quantity(self):
+    #     return sum(map(lambda x: x.quantity, self.items.all()))
+    #
+    # @property
+    # def total_cost(self):
+    #     return sum(map(lambda x: x.product_cost, self.items.all()))
 
     def delete(self, using=None, keep_parents=False):
         print('Order delete')
         self.items.delete()
         super().delete()
 
+    @property
+    def get_summary(self):
+        items = self.items.all().select_related()
+        return {
+            'total_cost': sum(map(lambda x: x.quantity, items)),
+            'total_quantity': sum(map(lambda x: x.product_cost, items))
+        }
+
 
 class OrderItemManager(models.QuerySet):
     def delete(self):
-        print('QS deleet')
         super(OrderItemManager, self).delete()
 
 

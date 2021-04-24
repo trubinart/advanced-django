@@ -4,6 +4,8 @@ from django.http import JsonResponse
 import datetime
 from mainapp.models import Category, Products
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.core.cache import cache
+from django.conf import settings
 
 
 # Create your views here.
@@ -27,11 +29,19 @@ def index(request):
 #     return render(request,'mainapp/products.html', content)
 
 
+
 def products(request, category_id=None, page=1):
-    if category_id:
-        products = Products.objects.filter(category_id=category_id)
+    if settings.LOW_CACHE:
+        key = 'products'
+        products = cache.get(key)
+        if products is None:
+            products = Products.objects.all()
+            cache.set(key, products)
     else:
-        products = Products.objects.all()
+        if category_id:
+            products = Products.objects.filter(category_id=category_id)
+        else:
+            products = Products.objects.all()
 
     per_page = 3
     paginator = Paginator(products, per_page)
@@ -49,6 +59,7 @@ def products(request, category_id=None, page=1):
         'products': products_paginator,
     }
     return render(request, 'mainapp/products.html', content)
+
 
 def price(request, pk):
     if request.is_ajax():
