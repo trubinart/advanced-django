@@ -6,7 +6,10 @@ from mainapp.models import Category, Products
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.cache import cache
 from django.conf import settings
-
+from django.dispatch import receiver
+from django.db.models.signals import pre_save
+from django.db import connection
+from django.db.models import F
 
 # Create your views here.
 def index(request):
@@ -27,7 +30,6 @@ def index(request):
 #         'categories': Category.objects.all(),
 #     }
 #     return render(request,'mainapp/products.html', content)
-
 
 
 def products(request, category_id=None, page=1):
@@ -68,3 +70,28 @@ def price(request, pk):
         return JsonResponse(
             {'price': product and product.price or 0}
         )
+
+
+def db_profile_by_type(sender, q_type, queries):
+    print(f'db profile {q_type} for {sender}:')
+    for query in filter(lambda x: q_type in x, map(lambda x: x['sql'], queries)):
+        print(query)
+
+
+@receiver(pre_save, sender=Category)
+def update_prod_cat_save(sender, instance, **kwargs):
+    print(instance)
+    print(instance.products_set)
+    if instance.pk:
+        if instance.is_active:
+            instance.products_set.update(is_active=True)
+        else:
+            instance.products_set.update(is_active=False)
+
+        db_profile_by_type(sender, 'UPDATE', connection.queries)
+
+@receiver(pre_save, sender=Category)
+def update_prod_cat_save(sender, instance, **kwargs):
+    if instance.sale > 0:
+        instance.products_set.update(price=F('price') * (1-instance.sale))
+        db_profile_by_type(sender, 'UPDATE', connection.queries)
